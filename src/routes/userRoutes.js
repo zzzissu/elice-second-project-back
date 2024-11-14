@@ -1,5 +1,6 @@
-const express = require('express');
-const userController = require('../controllers/userController');
+import express from 'express';
+import userController from '../controllers/userController.js';
+
 const router = express.Router();
 
 // 회원가입
@@ -17,4 +18,4 @@ router.put('/update/:userId', userController.updateProfile);
 // 회원 탈퇴
 router.delete('/delete/:userId', userController.deleteUser);
 
-module.exports = router;
+export default router;

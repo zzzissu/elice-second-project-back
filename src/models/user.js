@@ -1,9 +1,9 @@
-const mongoose = require('mongoose');
-const userSchema = require('./userSchema');
-const setUserMiddleware = require('../middleware/userMiddleware');
+import mongoose from 'mongoose';
+import userSchema from '../schema/userSchema.js';
+import setUserMiddleware from '../middleware/userMiddleware.js';
 
 setUserMiddleware(userSchema);
 
 const User = mongoose.model('User', userSchema);
 
-module.exports = User;
+export default User;
