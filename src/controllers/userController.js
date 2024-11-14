@@ -6,8 +6,8 @@ const userController = {
     signUp: async (req, res) => {
         try {
             const { email, password, name, nickname, phone, address } = req.body;
-            const hashedPassword = await secretPassword.hashPassword(password);
-            const user = await userService.signUp({ email, password: hashedPassword, name, nickname, phone, address });
+
+            const user = await userService.signUp({ email, password, name, nickname, phone, address });
 
             res.status(201).json({ message: '회원가입이 완료되었습니다.', user });
         } catch (e) {
@@ -19,15 +19,16 @@ const userController = {
     signIn: async (req, res) => {
         try {
             const { email, password } = req.body;
-            const user = await userService.signIn(email);
-            const isPasswordValid = await secretPassword.verifyPassword(password, user.password);
+            const user = await userService.signIn(email, password);
+            // const isPasswordValid = await secretPassword.verifyPassword(password, user.password);
 
-            if (!isPasswordValid) throw new Error('이메일 또는 비밀번호가 잘못되었습니다.');
+            // if (!isPasswordValid) throw new Error('이메일 또는 비밀번호가 잘못되었습니다.');
 
             const token = tokenUtil.createToken(user);
 
             res.json({ message: '로그인 성공', token, user });
         } catch (e) {
+            console.log(e);
             res.status(400).json({ message: e.message });
         }
     },

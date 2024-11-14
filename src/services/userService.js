@@ -37,13 +37,14 @@ const userService = {
         if (!user) {
             throw new Error('이메일 또는 비밀번호가 잘못되었습니다.');
         }
-
+        //console.log(user.password);
         // 유저 정보 확인(비밀번호)
         const isPasswordValid = await bcrypt.compare(password, user.password);
+        //console.log(isPasswordValid);
         if (!isPasswordValid) {
             throw new Error('이메일 또는 비밀번호가 잘못되었습니다.');
         }
-
+        //console.log(JWT_SECRET);
         // 토큰 생성
         const token = jwt.sign({ userId: user._id, email: user.email }, JWT_SECRET, {
             expiresIn: '1h',
@@ -89,3 +90,4 @@ const userService = {
 };
 
 export default userService;
+s;
