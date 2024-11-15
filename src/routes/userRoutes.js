@@ -3,19 +3,16 @@ import userController from '../controllers/userController.js';
 
 const router = express.Router();
 
-// 회원가입
-router.post('/signup', userController.signUp);
-
-// 로그인
-router.post('/signin', userController.signIn);
+//유저 목록 조회
+router.get('/', userController.userList);
 
 // 마이페이지 조회
-router.get('/:userId', userController.getProfile);
+router.get('/my', userController.getProfile);
 
 // 마이페이지 수정
-router.put('/update/:userId', userController.updateProfile);
+router.put('/my', userController.updateProfile);
 
 // 회원 탈퇴
-router.delete('/delete/:userId', userController.deleteUser);
+router.delete('/', userController.deleteUser);
 
 export default router;
