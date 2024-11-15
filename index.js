@@ -2,6 +2,7 @@ import 'dotenv/config'; // dotenv 환경변수 설정
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import userRoutes from './src/routes/userRoutes.js';
+import authRoutes from './src/routes/authRoutes.js';
 import productRoutes from './src/routes/productRoutes.js';
 import connectDB from './src/db/db.js'; // DB 연결 함수 임포트
 
@@ -14,8 +15,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // api 호출
+app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/product', productRoutes);
+app.use('/api/products', productRoutes);
 
 // DB 연결
 connectDB();

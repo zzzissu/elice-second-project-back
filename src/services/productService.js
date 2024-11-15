@@ -15,7 +15,7 @@ const productService = {
     // 상품 등록
     uploadProduct: async (productData) => {
         try {
-            const { name, image, price, description, seller_id, state, category_id } = productData;
+            const { name, image, price, description, sellerId, state, categoryId } = productData;
 
             // 새 상품 생성
             const newProduct = new Product({
@@ -23,9 +23,9 @@ const productService = {
                 image,
                 price,
                 description,
-                seller_id,
+                sellerId,
                 state,
-                category_id,
+                categoryId,
             });
 
             // 상품 저장
@@ -40,12 +40,12 @@ const productService = {
     // 상품 수정
     updateProduct: async (productId, updateData) => {
         try {
-            const { name, image, price, description, category_id } = updateData;
+            const { name, image, price, description, categoryId } = updateData;
 
             // 상품 업데이트
             const updatedProduct = await Product.findOneAndUpdate(
-                { _id: productId, deletedAt: null, state: true }, // 삭제된 상품과 판매된 상품 수정 불가
-                { name, image, price, description, category_id, updatedAt: Date.now() },
+                { _id: productId, deletedAt: null, state: false },
+                { name, image, price, description, categoryId, updatedAt: Date.now() },
                 { new: true } // 수정된 데이터를 반환
             );
             if (!updatedProduct) {

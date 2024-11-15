@@ -7,12 +7,12 @@ const router = express.Router();
 router.get('/', productController.getProductList);
 
 // 2. 상품 등록
-router.put('/upload', productController.uploadProduct);
+router.post('/', productController.uploadProduct);
 
 // 3. 상품 수정
-router.post('/post/:productId', productController.updateProduct);
+router.put('/:productId', productController.updateProduct);
 
 // 4. 상품 삭제
-router.delete('/delete/:productId', productController.deleteProduct);
+router.delete('/:productId', productController.deleteProduct);
 
 export default router;
