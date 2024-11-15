@@ -4,9 +4,19 @@ import jwt from 'jsonwebtoken';
 const { JWT_SECRET } = process.env;
 
 const userService = {
+    //유저 조회
+    userList: async () => {
+        try {
+            // 탈퇴하지 않은 유저만 조회
+            const users = await User.find({ deletedAt: null }).sort({ createdAt: -1 });
+            return users;
+        } catch (e) {
+            throw new Error('유저 목록 조회에 실패했습니다.');
+        }
+    },
     // 회원 생성(가입)
     signUp: async (user) => {
-        const { email, password, name, nickname, phone, address } = user;
+        const { email, password, name, nickname, phone, postalCode, basicAdd, detailAdd } = user;
 
         // 이메일 중복 확인
         const existingUser = await User.findOne({ email });
@@ -24,7 +34,9 @@ const userService = {
             phone,
             email,
             password: hashedPassword,
-            address,
+            postalCode,
+            basicAdd,
+            detailAdd,
         });
 
         return await newUser.save();
@@ -53,7 +65,7 @@ const userService = {
         return { user, token };
     },
 
-    // 마이페이지 조회
+    // 유저정보 조회
     getProfile: async (userId) => {
         const user = await User.findOne({ _id: userId, deletedAt: null }).select('-password -deletedAt'); // 비밀번호와 삭제 날짜 제외
 
@@ -63,12 +75,12 @@ const userService = {
         return user;
     },
 
-    // 마이페이지 수정
+    // 유저정보 수정
     updateProfile: async (userId, updateData) => {
-        const { phone, address } = updateData;
+        const { phone, postalCode, basicAdd, detailAdd } = updateData;
         const user = await User.findOneAndUpdate(
             { _id: userId, deletedAt: null },
-            { phone, address, updatedAt: Date.now() },
+            { phone, postalCode, basicAdd, detailAdd, updatedAt: Date.now() },
             { new: true }
         ).select('-password -deletedAt'); // 비밀번호와 삭제 날짜 제외
 

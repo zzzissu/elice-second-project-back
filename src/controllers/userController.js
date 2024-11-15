@@ -2,12 +2,31 @@ import userService from '../services/userService.js';
 import { secretPassword, tokenUtil } from '../utils/authUtils.js'; // secretPassword와 tokenUtil 임포트
 
 const userController = {
+    // 유저목록 조회
+    userList: async (req, res) => {
+        try {
+            const users = await userService.userList();
+            res.status(200).json(users);
+        } catch (e) {
+            res.status(400).json({ message: e.message });
+        }
+    },
+
     // 회원가입
     signUp: async (req, res) => {
         try {
-            const { email, password, name, nickname, phone, address } = req.body;
+            const { email, password, name, nickname, phone, postalCode, basicAdd, detailAdd } = req.body;
 
-            const user = await userService.signUp({ email, password, name, nickname, phone, address });
+            const user = await userService.signUp({
+                email,
+                password,
+                name,
+                nickname,
+                phone,
+                postalCode,
+                basicAdd,
+                detailAdd,
+            });
 
             res.status(201).json({ message: '회원가입이 완료되었습니다.', user });
         } catch (e) {
@@ -26,7 +45,7 @@ const userController = {
 
             const token = tokenUtil.createToken(user);
 
-            res.json({ message: '로그인 성공', token, user });
+            res.json({ message: '로그인 성공', user });
         } catch (e) {
             console.log(e);
             res.status(400).json({ message: e.message });
