@@ -44,17 +44,17 @@ const productService = {
 
             // 상품 업데이트
             const updatedProduct = await Product.findOneAndUpdate(
-                { id: productId, deletedAt: null, state: true }, // 삭제된 상품은 수정 불가
+                { _id: productId, deletedAt: null, state: true }, // 삭제된 상품과 판매된 상품 수정 불가
                 { name, image, price, description, category_id, updatedAt: Date.now() },
                 { new: true } // 수정된 데이터를 반환
             );
-
             if (!updatedProduct) {
                 throw new Error('상품을 찾을 수 없습니다.');
             }
 
             return { message: '상품이 성공적으로 수정되었습니다.', product: updatedProduct };
         } catch (e) {
+            console.log(e);
             throw new Error('상품 수정에 실패했습니다.');
         }
     },
@@ -64,7 +64,7 @@ const productService = {
         try {
             // 논리 삭제 처리 (deletedAt 필드에 현재 시간을 추가)
             const deletedProduct = await Product.findOneAndUpdate(
-                { id: productId, deletedAt: null },
+                { _id: productId, deletedAt: null },
                 { deletedAt: Date.now() },
                 { new: true } // 삭제된 데이터를 반환
             );
