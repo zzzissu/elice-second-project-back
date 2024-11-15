@@ -5,7 +5,7 @@ const productService = {
     getProductList: async () => {
         try {
             // 삭제되지 않은 상품만 조회
-            const products = await Product.find({ deletedAt: null, state: true }).sort({ createdAt: -1 });
+            const products = await Product.find({ deletedAt: null, state: false }).sort({ createdAt: -1 });
             return products;
         } catch (e) {
             throw new Error('상품 리스트 조회에 실패했습니다.');
@@ -15,7 +15,7 @@ const productService = {
     // 상품 등록
     uploadProduct: async (productData) => {
         try {
-            const { name, image, price, description, seller_id, category_id } = productData;
+            const { name, image, price, description, seller_id, state, category_id } = productData;
 
             // 새 상품 생성
             const newProduct = new Product({
@@ -24,6 +24,7 @@ const productService = {
                 price,
                 description,
                 seller_id,
+                state,
                 category_id,
             });
 
@@ -31,6 +32,7 @@ const productService = {
             await newProduct.save();
             return { message: '상품이 성공적으로 등록되었습니다.', product: newProduct };
         } catch (e) {
+            console.log(e);
             throw new Error('상품 등록에 실패했습니다.');
         }
     },

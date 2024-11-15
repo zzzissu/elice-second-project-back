@@ -1,7 +1,13 @@
+import mongoose from 'mongoose';
 const setProductMiddleware = (productSchema) => {
     // 상품 저장 시 createdAt과 updatedAt 설정 (비동기 처리)
     productSchema.pre('save', async function (next) {
         try {
+            if (!this.id) {
+                // 기존에 id가 없는 경우에만 생성
+                this.id = new mongoose.Types.ObjectId().toString(); // 고유한 ObjectId를 id에 할당
+            }
+
             if (this.isNew) {
                 // 새 상품이라면 createdAt을 현재 시간으로 설정
                 this.createdAt = Date.now();
