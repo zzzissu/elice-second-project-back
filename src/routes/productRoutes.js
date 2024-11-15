@@ -10,9 +10,9 @@ router.get('/', productController.getProductList);
 router.put('/upload', productController.uploadProduct);
 
 // 3. 상품 수정
-router.post('/post', productController.updateProduct);
+router.post('/post/:productId', productController.updateProduct);
 
 // 4. 상품 삭제
-router.delete('/delete', productController.deleteProduct);
+router.delete('/delete/:productId', productController.deleteProduct);
 
 export default router;
