@@ -13,7 +13,11 @@ const productSchema = new Schema({
         required: true,
         default: false,
     },
-    categoryId: { type: String, required: true },
+    categoryName: {
+        type: String,
+        enum: ['audio devices', 'cameras', 'typewriters', 'mobile phones', 'display devices'],
+        required: true,
+    },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
     deletedAt: { type: Date, default: null },
