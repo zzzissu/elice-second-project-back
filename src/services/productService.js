@@ -1,11 +1,11 @@
 import Product from '../models/product.js';
-
+import User from '../models/user.js';
 const productService = {
     // 상품 리스트 조회
     getProductList: async () => {
         try {
             // 삭제되지 않은 상품만 조회
-            const products = await Product.find({ deletedAt: null, state: false }).sort({ createdAt: -1 });
+            const products = await Product.find({ deletedAt: null, soldOut: false }).sort({ createdAt: -1 });
             return products;
         } catch (e) {
             throw new Error('상품 리스트 조회에 실패했습니다.');
@@ -13,9 +13,9 @@ const productService = {
     },
 
     // 상품 등록
-    uploadProduct: async (productData) => {
+    uploadProduct: async (req, productData) => {
         try {
-            const { name, image, price, description, sellerId, state, categoryName } = productData;
+            const { name, image, price, description, categoryName } = productData;
 
             // 새 상품 생성
             const newProduct = new Product({
@@ -23,12 +23,12 @@ const productService = {
                 image,
                 price,
                 description,
-                sellerId,
-                state,
+                sellerId: req.user._id,
                 categoryName,
             });
 
             // 상품 저장
+            console.log(req.user);
             await newProduct.save();
             return { message: '상품이 성공적으로 등록되었습니다.', product: newProduct };
         } catch (e) {
@@ -44,7 +44,7 @@ const productService = {
 
             // 상품 업데이트
             const updatedProduct = await Product.findOneAndUpdate(
-                { _id: productId, deletedAt: null, state: false },
+                { _id: productId, deletedAt: null, soldOut: false },
                 { name, image, price, description, categoryName, updatedAt: Date.now() },
                 { new: true } // 수정된 데이터를 반환
             );
