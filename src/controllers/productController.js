@@ -15,7 +15,7 @@ const productController = {
     uploadProduct: async (req, res) => {
         try {
             const productData = req.body; // 요청 본문에서 상품 데이터 가져오기
-            const result = await productService.uploadProduct(productData);
+            const result = await productService.uploadProduct(req, productData);
             res.status(201).json(result);
         } catch (e) {
             res.status(400).json({ message: e.message });
