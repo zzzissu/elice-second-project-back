@@ -77,10 +77,10 @@ const userService = {
 
     // 유저정보 수정
     updateProfile: async (userId, updateData) => {
-        const { phone, postalCode, basicAdd, detailAdd } = updateData;
+        const { phone, image, postalCode, basicAdd, detailAdd } = updateData;
         const user = await User.findOneAndUpdate(
             { _id: userId, deletedAt: null },
-            { phone, postalCode, basicAdd, detailAdd, updatedAt: Date.now() },
+            { phone, image, postalCode, basicAdd, detailAdd, updatedAt: Date.now() },
             { new: true }
         ).select('-password -deletedAt'); // 비밀번호와 삭제 날짜 제외
 
