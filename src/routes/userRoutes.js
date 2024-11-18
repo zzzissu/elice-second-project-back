@@ -10,7 +10,7 @@ router.get('/', userController.userList);
 router.get('/my', userController.getProfile);
 
 // 마이페이지 수정
-router.put('/my', userController.updateProfile);
+router.patch('/my', userController.updateProfile);
 
 // 회원 탈퇴
 router.delete('/', userController.deleteUser);
