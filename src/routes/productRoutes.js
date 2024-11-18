@@ -1,4 +1,5 @@
 import express from 'express';
+import authenticate from '../middleware/authMiddleware.js';
 import productController from '../controllers/productController.js';
 
 const router = express.Router();
@@ -7,7 +8,7 @@ const router = express.Router();
 router.get('/', productController.getProductList);
 
 // 2. 상품 등록
-router.post('/', productController.uploadProduct);
+router.post('/', authenticate, productController.uploadProduct);
 
 // 3. 상품 수정
 router.put('/:productId', productController.updateProduct);

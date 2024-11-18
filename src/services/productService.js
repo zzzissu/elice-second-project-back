@@ -1,5 +1,5 @@
 import Product from '../models/product.js';
-import User from '../models/user.js';
+
 const productService = {
     // 상품 리스트 조회
     getProductList: async () => {
@@ -28,7 +28,6 @@ const productService = {
             });
 
             // 상품 저장
-            console.log(req.user);
             await newProduct.save();
             return { message: '상품이 성공적으로 등록되었습니다.', product: newProduct };
         } catch (e) {
