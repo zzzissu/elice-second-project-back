@@ -45,6 +45,24 @@ const userController = {
             next(e);
         }
     },
+    // 비밀번호 일치 확인 API
+    checkPassword: async (req, res) => {
+        try {
+            const userId = req.user._id; // 로그인된 사용자 ID
+            const { password } = req.body; // 입력된 비밀번호
+
+            // 비밀번호 확인 서비스 호출
+            const isMatch = await userService.checkPassword(userId, password);
+
+            if (isMatch) {
+                res.status(200).json({ message: '비밀번호가 일치합니다.' });
+            } else {
+                res.status(400).json({ message: '비밀번호가 일치하지 않습니다.' });
+            }
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    },
     // 회원가입
     signUp: async (req, res, next) => {
         try {
