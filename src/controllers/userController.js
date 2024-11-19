@@ -1,18 +1,19 @@
+import errorMiddleware from '../middleware/errorMiddleware.js';
 import userService from '../services/userService.js';
 import { secretPassword, tokenUtil } from '../utils/authUtils.js'; // secretPassword와 tokenUtil 임포트
 
 const userController = {
     // 유저목록 조회
-    userList: async (req, res) => {
+    userList: async (req, res, next) => {
         try {
             const users = await userService.userList();
             res.status(200).json(users);
         } catch (e) {
-            res.status(400).json({ message: e.message });
+            next(e);
         }
     },
     // 이메일 중복 확인 API
-    checkEmail: async (req, res) => {
+    checkEmail: async (req, res, next) => {
         try {
             const { email } = req.body; // 쿼리 파라미터에서 이메일 추출
             if (!email) {
@@ -24,12 +25,12 @@ const userController = {
             }
             res.status(200).json({ valid: true, message: '사용 가능한 이메일입니다.' });
         } catch (e) {
-            res.status(500).json({ message: e.message });
+            next(e);
         }
     },
 
     // 닉네임 중복 확인 API
-    checkNickname: async (req, res) => {
+    checkNickname: async (req, res, next) => {
         try {
             const { nickname } = req.body; // 쿼리 파라미터에서 닉네임 추출
             if (!nickname) {
@@ -41,11 +42,11 @@ const userController = {
             }
             res.status(200).json({ valid: true, message: '사용 가능한 닉네임입니다.' });
         } catch (e) {
-            res.status(500).json({ message: e.message });
+            next(e);
         }
     },
     // 회원가입
-    signUp: async (req, res) => {
+    signUp: async (req, res, next) => {
         try {
             const { email, password, name, nickname, phone, address } = req.body;
 
@@ -53,12 +54,12 @@ const userController = {
 
             res.status(201).json({ message: '회원가입이 완료되었습니다.', user });
         } catch (e) {
-            res.status(400).json({ message: e.message });
+            next(e);
         }
     },
 
     // 로그인
-    signIn: async (req, res) => {
+    signIn: async (req, res, next) => {
         try {
             const { email, password } = req.body;
             const user = await userService.signIn(email, password);
@@ -70,13 +71,12 @@ const userController = {
 
             res.json({ message: '로그인 성공', user });
         } catch (e) {
-            console.log(e);
-            res.status(400).json({ message: e.message });
+            next(e);
         }
     },
 
     // 마이페이지 조회
-    getProfile: async (req, res) => {
+    getProfile: async (req, res, next) => {
         try {
             const userId = req.user._id; // 로그인한 사용자의 ID
             const user = await userService.getProfile(userId); // 서비스에 userId 전달
@@ -85,32 +85,32 @@ const userController = {
             }
             res.status(200).json(user); // 유저 정보 반환
         } catch (e) {
-            res.status(400).json({ message: e.message });
+            next(e);
         }
     },
 
     // 마이페이지 수정
-    updateProfile: async (req, res) => {
+    updateProfile: async (req, res, next) => {
         try {
             const userId = req.user._id;
             const updateData = req.body;
             const updatedUser = await userService.updateProfile(userId, updateData);
 
-            res.json(updatedUser);
+            res.status(204).json(updatedUser);
         } catch (e) {
-            res.status(400).json({ message: e.message });
+            next(e);
         }
     },
 
     // 회원 탈퇴
-    deleteUser: async (req, res) => {
+    deleteUser: async (req, res, next) => {
         try {
             const userId = req.user._id;
             const result = await userService.deleteUser(userId);
 
-            res.json(result);
+            res.status(204).json(result);
         } catch (e) {
-            res.status(400).json({ message: e.message });
+            next(e);
         }
     },
 };
