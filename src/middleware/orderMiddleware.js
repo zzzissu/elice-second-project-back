@@ -1,16 +1,21 @@
-// orderMiddleware.js
-import Product from '../models/product.js'; // 상품 모델 불러오기
-
+import Product from '../models/product.js';
+import orderSchema from '../schema/orderSchema.js';
 // 결제 완료 후 상품의 soldOut 상태 업데이트 미들웨어
 const updateProductSoldOut = async (order) => {
-    if (order.soldOut) {
+    orderSchema.post('save', async function (doc) {
         try {
-            await Product.findByIdAndUpdate(order.productId, { soldOut: true });
-            console.log(`상품 ${order.productId}의 soldOut 상태가 true로 업데이트되었습니다.`);
+            // 주문이 저장된 후 호출됨
+            const product = await Product.findById(doc.productId);
+
+            // 상품이 존재하고 아직 판매 완료가 아닌 경우
+            if (product && !product.soldOut) {
+                await Product.findByIdAndUpdate(doc.productId, { soldOut: true });
+                console.log(`Product ${product.name} marked as sold out`);
+            }
         } catch (error) {
-            console.error('상품 업데이트 실패:', error);
+            console.error('Error updating product soldOut status:', error);
         }
-    }
+    });
 };
 
 export default updateProductSoldOut;

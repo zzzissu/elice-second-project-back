@@ -6,11 +6,15 @@ import authRoutes from './src/routes/authRoutes.js';
 import productRoutes from './src/routes/productRoutes.js';
 import orderRoutes from './src/routes/orderRoutes.js';
 import connectDB from './src/db/db.js'; // DB 연결 함수 임포트
+import errorMiddleware from './src/middleware/errorMiddleware.js';
+import cors from 'cors';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // 미들웨어 호출
+
+app.use(cors()); // CORS 미들웨어 사용
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -20,6 +24,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
+
+app.use(errorMiddleware);
 
 // DB 연결
 connectDB();

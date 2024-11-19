@@ -14,15 +14,27 @@ const userService = {
             throw new Error('유저 목록 조회에 실패했습니다.');
         }
     },
+    // 이메일 중복 확인
+    checkEmail: async (email) => {
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return true; // 이메일이 이미 존재함
+        }
+        return false; // 이메일 사용 가능
+    },
+
+    // 닉네임 중복 확인
+    checkNickname: async (nickname) => {
+        const existingUser = await User.findOne({ nickname });
+        if (existingUser) {
+            return true; // 닉네임이 이미 존재함
+        }
+        return false; // 닉네임 사용 가능
+    },
+
     // 회원 생성(가입)
     signUp: async (user) => {
         const { email, password, name, nickname, phone, postalCode, basicAdd, detailAdd } = user;
-
-        // 이메일 중복 확인
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            throw new Error('이미 사용 중인 이메일입니다.');
-        }
 
         // 비밀번호 해싱
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -67,12 +79,13 @@ const userService = {
 
     // 유저정보 조회
     getProfile: async (userId) => {
-        const user = await User.findOne({ _id: userId, deletedAt: null }).select('-password -deletedAt'); // 비밀번호와 삭제 날짜 제외
-
-        if (!user) {
-            throw new Error('사용자를 찾을 수 없습니다.');
+        try {
+            // 로그인한 유저의 정보를 삭제된 데이터 제외하고 조회
+            const user = await User.findOne({ _id: userId, deletedAt: null }).select('-password -deletedAt');
+            return user; // 단일 유저 반환
+        } catch (e) {
+            throw new Error('유저 정보 조회에 실패했습니다.');
         }
-        return user;
     },
 
     // 유저정보 수정
