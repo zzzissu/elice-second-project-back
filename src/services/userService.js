@@ -31,6 +31,22 @@ const userService = {
         }
         return false; // 닉네임 사용 가능
     },
+    // 비밀번호 중복 확인
+    checkPassword: async (userId, password) => {
+        try {
+            // DB에서 해당 사용자 찾기
+            const user = await User.findById(userId);
+            if (!user) {
+                throw new Error('사용자를 찾을 수 없습니다.');
+            }
+
+            // 해싱된 비밀번호와 입력한 비밀번호 비교
+            const isMatch = await bcrypt.compare(password, user.password);
+            return isMatch;
+        } catch (error) {
+            throw new Error(`비밀번호 확인 실패: ${error.message}`);
+        }
+    },
 
     // 회원 생성(가입)
     signUp: async (user) => {
