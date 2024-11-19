@@ -16,10 +16,6 @@ const orderSchema = new mongoose.Schema({
         ref: 'User', // 판매자 정보
         required: true,
     },
-    soldOut: {
-        type: Boolean,
-        default: false, // 결제 상태: true는 결제 완료, false는 결제 대기 중
-    },
     createdAt: {
         type: Date,
         default: Date.now, // 결제일
