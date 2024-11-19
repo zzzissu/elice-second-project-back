@@ -12,10 +12,18 @@ const OrderController = {
             res.status(201).json({
                 message: '주문이 성공적으로 생성되었습니다.',
                 orderId: order._id,
-                productId: order.productId,
-                buyerId: order.buyerId,
-                sellerId: order.sellerId,
-                soldOut: order.soldOut,
+                product: {
+                    id: order.productId._id,
+                    name: order.productId.name,
+                    image: order.productId.image,
+                    price: order.productId.price,
+                },
+                buyerId: {
+                    id: order.buyerId._id,
+                    name: order.buyerId.name,
+                    phone: order.buyerId.phone,
+                    address: `${order.buyerId.postalCode},${order.buyerId.basicAdd}, ${order.buyerId.detailAdd}`,
+                },
                 createdAt: order.createdAt,
             });
         } catch (error) {

@@ -6,21 +6,24 @@ const OrderService = {
     // 주문 생성
     createOrder: async (productId, buyerId) => {
         try {
-            const product = await Product.findById(productId);
+            const product = await Product.findById(productId).populate('sellerId');
             if (!product) {
                 throw new Error('해당 상품이 존재하지 않습니다.');
             }
-
+            //console.log(product);
             const sellerId = product.sellerId; // 상품의 판매자 ID
 
             const newOrder = new Order({
                 productId,
                 buyerId,
-                sellerId,
+                sellerId: product.sellerId._id,
             });
 
             await newOrder.save();
-            return newOrder;
+            const populatedOrder = await Order.findById(newOrder._id)
+                .populate('productId', 'name image price')
+                .populate('buyerId', 'name phone postalCode basicAdd detailAdd');
+            return populatedOrder;
         } catch (error) {
             throw new Error(`주문 생성 실패: ${error.message}`);
         }
