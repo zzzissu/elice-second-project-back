@@ -15,18 +15,9 @@ const userController = {
     // 회원가입
     signUp: async (req, res) => {
         try {
-            const { email, password, name, nickname, phone, postalCode, basicAdd, detailAdd } = req.body;
+            const { email, password, name, nickname, phone, address } = req.body;
 
-            const user = await userService.signUp({
-                email,
-                password,
-                name,
-                nickname,
-                phone,
-                postalCode,
-                basicAdd,
-                detailAdd,
-            });
+            const user = await userService.signUp({ email, password, name, nickname, phone, address });
 
             res.status(201).json({ message: '회원가입이 완료되었습니다.', user });
         } catch (e) {

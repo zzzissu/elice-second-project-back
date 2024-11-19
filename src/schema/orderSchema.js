@@ -3,23 +3,27 @@ import mongoose from 'mongoose';
 const orderSchema = new mongoose.Schema({
     productId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product',
+        ref: 'Product', // 상품 고유번호와 연결된 상품 정보
         required: true,
-    }, // 결제된 상품 고유번호
+    },
     buyerId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'User', // 구매자 고유번호와 연결된 사용자 정보
         required: true,
-    }, // 구매자 고유번호
-    state: {
+    },
+    sellerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', // 판매자 정보
+        required: true,
+    },
+    soldOut: {
         type: Boolean,
-        required: true,
-        default: false,
-    }, // 결제 상태
-    payedAt: {
+        default: false, // 결제 상태: true는 결제 완료, false는 결제 대기 중
+    },
+    createdAt: {
         type: Date,
-        default: null,
-    }, // 결제 완료 시간
+        default: Date.now, // 결제일
+    },
 });
 
 export default orderSchema;

@@ -1,4 +1,3 @@
-import express from 'express';
 import productService from '../services/productService.js';
 
 const productController = {
