@@ -1,6 +1,6 @@
 import User from '../models/user.js';
 import bcrypt from 'bcrypt';
-import { NotFoundError, UnauthorizedError } from '../class/errorClass.js';
+import { NotFoundError, UnauthorizedError, ConflictError } from '../class/errorClass.js';
 import { tokenUtil } from '../utils/authUtils.js';
 
 const userService = {
@@ -14,17 +14,19 @@ const userService = {
     // 이메일 중복 확인
     checkEmail: async (email) => {
         const existingUser = await User.findOne({ email });
-        return existingUser
-            ? { valid: false, message: '이미 사용 중인 이메일입니다.' }
-            : { valid: true, message: '사용 가능한 이메일입니다.' };
+        if (existingUser) {
+            throw new ConflictError('이미 사용 중인 이메일입니다.');
+        }
+        return { valid: true, message: '사용 가능한 이메일입니다.' };
     },
 
     // 닉네임 중복 확인
     checkNickname: async (nickname) => {
         const existingUser = await User.findOne({ nickname });
-        return existingUser
-            ? { valid: false, message: '이미 사용 중인 닉네임입니다.' }
-            : { valid: true, message: '사용 가능한 닉네임입니다.' };
+        if (existingUser) {
+            throw new ConflictError('이미 사용 중인 닉네임입니다.');
+        }
+        return { valid: true, message: '사용 가능한 닉네임입니다.' };
     },
 
     // 비밀번호 일치 확인
@@ -32,8 +34,10 @@ const userService = {
         const user = await User.findById(userId);
         if (!user) throw new NotFoundError('사용자를 찾을 수 없습니다.');
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) throw new UnauthorizedError('비밀번호가 일치하지 않습니다.');
-        return { message: '비밀번호가 일치합니다.' };
+        if (!isMatch) {
+            throw new UnauthorizedError('비밀번호가 일치하지 않습니다.');
+        }
+        return { valid: true, message: '비밀번호가 일치합니다.' }
     },
 
     // 회원가입
@@ -56,9 +60,9 @@ const userService = {
     // 로그인
     signIn: async (email, password) => {
         const user = await User.findOne({ email, deletedAt: null });
-        if (!user) throw new NotFoundError('이메일 또는 비밀번호가 잘못되었습니다.');
+        if (!user) throw new UnauthorizedError('이메일 또는 비밀번호가 잘못되었습니다.');
         const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) throw new NotFoundError('이메일 또는 비밀번호가 잘못되었습니다.');
+        if (!isPasswordValid) throw new UnauthorizedError('이메일 또는 비밀번호가 잘못되었습니다.');
         const token = tokenUtil.createToken(user);
         return { user, token };
     },
