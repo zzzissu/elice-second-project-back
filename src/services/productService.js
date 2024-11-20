@@ -37,6 +37,22 @@ const productService = {
         }
     },
 
+    // 특정 상품 조회
+    getProduct: async (productId) => {
+        try {
+            // 특정 상품 조회 (삭제되지 않은 상품만)
+            const product = await Product.findOne({ _id: productId, deletedAt: null, soldOut: false });
+
+            if (!product) {
+                throw new NotFoundError('해당 상품을 찾을 수 없습니다.');
+            }
+
+            return product;
+        } catch (e) {
+            throw new Error(`상품 조회에 실패했습니다: ${e.message}`);
+        }
+    },
+
     // 상품 수정
     updateProduct: async (productId, updateData) => {
         try {
