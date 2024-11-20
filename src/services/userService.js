@@ -1,6 +1,6 @@
 import User from '../models/user.js';
 import bcrypt from 'bcrypt';
-import { NotFoundError } from '../class/errorClass.js';
+import { NotFoundError, UnauthorizedError } from '../class/errorClass.js';
 import { tokenUtil } from '../utils/authUtils.js';
 
 const userService = {
@@ -13,7 +13,6 @@ const userService = {
 
     // 이메일 중복 확인
     checkEmail: async (email) => {
-        if (!email) throw new Error('이메일을 입력해주세요.');
         const existingUser = await User.findOne({ email });
         return existingUser
             ? { valid: false, message: '이미 사용 중인 이메일입니다.' }
@@ -22,7 +21,6 @@ const userService = {
 
     // 닉네임 중복 확인
     checkNickname: async (nickname) => {
-        if (!nickname) throw new Error('닉네임을 입력해주세요.');
         const existingUser = await User.findOne({ nickname });
         return existingUser
             ? { valid: false, message: '이미 사용 중인 닉네임입니다.' }
@@ -34,7 +32,7 @@ const userService = {
         const user = await User.findById(userId);
         if (!user) throw new NotFoundError('사용자를 찾을 수 없습니다.');
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) throw new Error('비밀번호가 일치하지 않습니다.');
+        if (!isMatch) throw new UnauthorizedError('비밀번호가 일치하지 않습니다.');
         return { message: '비밀번호가 일치합니다.' };
     },
 
