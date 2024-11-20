@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { UnauthorizedError } from '../class/errorClass.js'
 
 export const secretPassword = {
   // 비밀번호 암호화
@@ -34,7 +35,7 @@ export const tokenUtil = {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       return decoded;
     } catch (e) {
-      throw new Error('Invalid Token');
+      throw new UnauthorizedError('토큰이 유효하지 않습니다.');
     }
   }
 };
