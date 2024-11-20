@@ -1,17 +1,13 @@
-import errorMiddleware from '../middleware/errorMiddleware.js';
 import userService from '../services/userService.js';
 import { secretPassword, tokenUtil } from '../utils/authUtils.js'; // secretPassword와 tokenUtil 임포트
+import asyncHandler from '../utils/asyncHandler.js';
 
 const userController = {
     // 유저목록 조회
-    userList: async (req, res, next) => {
-        try {
-            const users = await userService.userList();
-            res.status(200).json(users);
-        } catch (e) {
-            next(e);
-        }
-    },
+    userList: asyncHandler(async (req, res) => {
+        const users = await userService.userList();
+        res.status(200).json(users);
+    }),
     // 이메일 중복 확인 API
     checkEmail: async (req, res, next) => {
         try {
