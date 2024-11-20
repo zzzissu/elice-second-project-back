@@ -10,7 +10,7 @@ const productController = {
     */
 
     getProductList: async (req, res, next) => {
-        const { currentPage = 1, limit = 3, sort = 'latest', categoryName } = req.query;
+        const { currentPage = 1, limit = 12, sort = 'latest', categoryName } = req.query;
     
         // 상품 리스트 조회 서비스 호출
         const result = await productService.getProductList(Number(currentPage), Number(limit), sort, categoryName);
