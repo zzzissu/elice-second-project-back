@@ -1,6 +1,8 @@
 import User from '../models/user.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { InternalServerError } from '../class/errorClass.js'
+import { tokenUtil } from '../utils/authUtils.js';
 const { JWT_SECRET } = process.env;
 
 const userService = {
@@ -11,7 +13,7 @@ const userService = {
             const users = await User.find({ deletedAt: null }).sort({ createdAt: -1 });
             return users;
         } catch (e) {
-            throw new Error('유저 목록 조회에 실패했습니다.');
+            throw new NotFoundError('유저 목록을 찾을 수 없습니다.');
         }
     },
     // 이메일 중복 확인
@@ -37,14 +39,14 @@ const userService = {
             // DB에서 해당 사용자 찾기
             const user = await User.findById(userId);
             if (!user) {
-                throw new Error('사용자를 찾을 수 없습니다.');
+                throw new NotFoundError('사용자를 찾을 수 없습니다.');
             }
 
             // 해싱된 비밀번호와 입력한 비밀번호 비교
             const isMatch = await bcrypt.compare(password, user.password);
             return isMatch;
-        } catch (error) {
-            throw new Error(`비밀번호 확인 실패: ${error.message}`);
+        } catch (e) {
+            throw new NotFoundError(`비밀번호 확인 실패: ${error.message}`);
         }
     },
 
@@ -75,20 +77,18 @@ const userService = {
         // 유저 정보 확인(이메일)
         const user = await User.findOne({ email, deletedAt: null });
         if (!user) {
-            throw new Error('이메일 또는 비밀번호가 잘못되었습니다.');
+            throw new NotFoundError('이메일 또는 비밀번호가 잘못되었습니다.');
         }
         //console.log(user.password);
         // 유저 정보 확인(비밀번호)
         const isPasswordValid = await bcrypt.compare(password, user.password);
         //console.log(isPasswordValid);
         if (!isPasswordValid) {
-            throw new Error('이메일 또는 비밀번호가 잘못되었습니다.');
+            throw new NotFoundError('이메일 또는 비밀번호가 잘못되었습니다.');
         }
         //console.log(JWT_SECRET);
         // 토큰 생성
-        const token = jwt.sign({ userId: user._id, email: user.email }, JWT_SECRET, {
-            expiresIn: '1h',
-        });
+        const token = tokenUtil.createToken(user);
 
         return { user, token };
     },
@@ -100,7 +100,7 @@ const userService = {
             const user = await User.findOne({ _id: userId, deletedAt: null }).select('-password -deletedAt');
             return user; // 단일 유저 반환
         } catch (e) {
-            throw new Error('유저 정보 조회에 실패했습니다.');
+            throw new NotFoundError('유저 정보 조회에 실패했습니다.');
         }
     },
 
@@ -114,7 +114,7 @@ const userService = {
         ).select('-password -deletedAt'); // 비밀번호와 삭제 날짜 제외
 
         if (!user) {
-            throw new Error('사용자를 찾을 수 없습니다.');
+            throw new NotFoundError('사용자를 찾을 수 없습니다.');
         }
         return user;
     },
@@ -124,7 +124,7 @@ const userService = {
         const user = await User.findOneAndUpdate({ _id: userId }, { deletedAt: Date.now() }, { new: true });
 
         if (!user) {
-            throw new Error('사용자를 찾을 수 없습니다.');
+            throw new NotFoundError('사용자를 찾을 수 없습니다.');
         }
         return { message: '회원 탈퇴가 완료되었습니다.', user };
     },
