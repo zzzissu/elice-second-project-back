@@ -20,6 +20,16 @@ const productController = {
             next(e);
         }
     },
+    // 특정 상품 조회
+    getProduct: async (req, res, next) => {
+        const { productId: productId } = req.params; // URL에서 상품 ID 추출
+        try {
+            const product = await productService.getProduct(productId);
+            res.status(200).json(product); // 성공 응답
+        } catch (error) {
+            next(error); // 에러를 글로벌 핸들러로 전달
+        }
+    },
     // 상품 수정
     updateProduct: async (req, res, next) => {
         try {
