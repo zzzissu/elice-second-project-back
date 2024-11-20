@@ -5,10 +5,10 @@ import authenticate from '../middleware/authMiddleware.js';
 const router = express.Router();
 
 // 이메일 중복 확인 API
-router.get('/email', userController.checkEmail);
+router.post('/email', userController.checkEmail);
 
 // 닉네임 중복 확인 API
-router.get('/nickname', userController.checkNickname);
+router.post('/nickname', userController.checkNickname);
 
 // 비밀번호 일치 확인 API
 router.post('/password', authenticate, userController.checkPassword);
