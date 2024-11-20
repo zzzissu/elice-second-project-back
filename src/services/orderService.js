@@ -1,6 +1,7 @@
 import Order from '../models/order.js';
 import Product from '../models/product.js';
 import User from '../models/user.js';
+import { NotFoundError, BadRequestError } from '../class/errorClass.js'
 
 const OrderService = {
     // 주문 생성
@@ -8,7 +9,7 @@ const OrderService = {
         try {
             const product = await Product.findById(productId).populate('sellerId');
             if (!product) {
-                throw new Error('해당 상품이 존재하지 않습니다.');
+                throw new NotFoundError('해당 상품이 존재하지 않습니다.');
             }
             //console.log(product);
             const sellerId = product.sellerId; // 상품의 판매자 ID
@@ -24,8 +25,8 @@ const OrderService = {
                 .populate('productId', 'name image price')
                 .populate('buyerId', 'name phone postalCode basicAdd detailAdd');
             return populatedOrder;
-        } catch (error) {
-            throw new Error(`주문 생성 실패: ${error.message}`);
+        } catch (e) {
+            throw new BadRequestError(`주문 생성 실패: ${error.message}`);
         }
     },
 
@@ -39,12 +40,12 @@ const OrderService = {
                 .populate('sellerId', 'name email'); // 판매자 정보
 
             if (orders.length === 0) {
-                throw new Error('구매한 주문이 없습니다.');
+                throw new NotFoundError('구매한 주문이 없습니다.');
             }
 
             return orders; // 주문 목록 반환
-        } catch (error) {
-            throw new Error(`주문 조회 실패: ${error.message}`);
+        } catch (e) {
+            throw new BadRequestError(`주문 조회 실패: ${error.message}`);
         }
     },
 };
