@@ -24,7 +24,7 @@ export const tokenUtil = {
       phone: userData.phone,
       email: userData.email,
     };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '10h' });
     return token;
   },
 
