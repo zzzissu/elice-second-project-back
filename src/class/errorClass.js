@@ -1,73 +1,72 @@
-class Error {
+class CustomError extends Error {
 	constructor(message) {
-		this.message = message;
-		this.name = "Error";
-
-		if (Error.captureStackTrace) {
-			Error.captureStackTrace(this, this.constructor);
-		  } else {
-			this.stack = new Error().stack;
-		  }
+			super(message); // 부모 클래스의 생성자에 메시지를 전달
+			this.name = this.constructor.name; // 클래스 이름을 사용
+			if (Error.captureStackTrace) {
+					Error.captureStackTrace(this, this.constructor);
+			} else {
+					this.stack = new Error().stack;
+			}
 	}
 }
 
-class BadRequestError extends Error {
+class BadRequestError extends CustomError {
 	constructor(message) {
-		super()
-		this.message = message;
-		this.statusCode = 400;
+			super();
+			this.message = message;
+			this.statusCode = 400;
 	}
 }
 
-class UnauthorizedError extends Error {
+class UnauthorizedError extends CustomError {
 	constructor(message) {
-		super()
-		this.message = message;
-		this.statusCode = 401;
+			super();
+			this.message = message;
+			this.statusCode = 401;
 	}
 }
 
-class PaymentRequiredError extends Error {
+class PaymentRequiredError extends CustomError {
 	constructor(message) {
-		super()
-		this.message = message;
-		this.statusCode = 402;
+			super();
+			this.message = message;
+			this.statusCode = 402;
 	}
 }
 
-class ForbiddenError extends Error {
+class ForbiddenError extends CustomError {
 	constructor(message) {
-		super()
-		this.message = message;
-		this.statusCode = 403;
+			super();
+			this.message = message;
+			this.statusCode = 403;
 	}
 }
 
-class NotFoundError extends Error {
+class NotFoundError extends CustomError {
 	constructor(message) {
-		super()
-		this.message = message;
-		this.statusCode = 404;
+			super();
+			this.message = message;
+			this.statusCode = 404;
 	}
 }
 
-class ConflictError extends Error {
+class ConflictError extends CustomError {
 	constructor(message) {
-		super()
-		this.message = message;
-		this.statusCode = 409;
+			super();
+			this.message = message;
+			this.statusCode = 409;
 	}
 }
 
-class InternalServerError extends Error {
+class InternalServerError extends CustomError {
 	constructor(message) {
-		super()
-		this.message = message;
-		this.statusCode = 500;
+			super();
+			this.message = message;
+			this.statusCode = 500;
 	}
 }
 
-export default {
+export {
 	BadRequestError,
 	UnauthorizedError,
 	PaymentRequiredError,
