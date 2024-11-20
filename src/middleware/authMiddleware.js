@@ -9,7 +9,7 @@ const authenticate = async (req, res, next) => {
 
     try {
         const decoded = tokenUtil.verifyToken(token); // 토큰 검증
-        req.user = { _id: decoded.userId, email: decoded.email }; // userId를 _id로 변환하여 설정
+        req.user = { _id: decoded.id, email: decoded.email }; // userId를 _id로 변환하여 설정
         //console.log('Authenticated User:', req.user); // 추가된 로그로 확인
         next();
     } catch (e) {
