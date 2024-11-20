@@ -1,7 +1,6 @@
 import User from '../models/user.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { InternalServerError } from '../class/errorClass.js'
 import { tokenUtil } from '../utils/authUtils.js';
 const { JWT_SECRET } = process.env;
 
