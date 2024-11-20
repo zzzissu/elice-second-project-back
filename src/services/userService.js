@@ -5,10 +5,19 @@ import { tokenUtil } from '../utils/authUtils.js';
 
 const userService = {
     // 유저 목록 조회
-    userList: async () => {
-        const users = await User.find({ deletedAt: null }).sort({ createdAt: -1 });
+    userList: async (page, limit) => {
+        const skip = (page - 1) * limit; // 스킵할 데이터 수 계산
+        const users = await User.find({ deletedAt: null })
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
         if (!users) throw new NotFoundError('유저 목록을 찾을 수 없습니다.');
-        return users;
+        
+        const totalUsers = await User.countDocuments({ deletedAt: null });
+        const totalPages = Math.ceil(totalUsers / limit);
+
+        return { users, totalPages, currentPage: page };
     },
 
     // 이메일 중복 확인

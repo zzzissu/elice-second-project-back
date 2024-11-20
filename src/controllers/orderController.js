@@ -1,5 +1,5 @@
 import OrderService from '../services/orderService.js';
-import asyncHandler from '../middleware/asyncHandler.js'; // asyncHandler를 가져옵니다.
+import asyncHandler from '../utils/asyncHandler.js'; // asyncHandler를 가져옵니다.
 
 const OrderController = {
     // 주문 생성

@@ -1,11 +1,24 @@
 import productService from '../services/productService.js';
 
 const productController = {
+    /*
     // 상품 목록 조회
     getProductList: async (req, res, next) => {
         const products = await productService.getProductList();
         res.status(200).json(products);
     },
+    */
+
+    getProductList: async (req, res, next) => {
+        const { currentPage = 1, limit = 3, sort = 'latest', categoryName } = req.query;
+    
+        // 상품 리스트 조회 서비스 호출
+        const result = await productService.getProductList(Number(currentPage), Number(limit), sort, categoryName);
+    
+        // 정상 처리된 결과를 반환
+        res.status(200).json(result);
+    },
+
     // 상품 등록
     uploadProduct: async (req, res, next) => {
         const productData = req.body; // 요청 본문에서 상품 데이터 가져오기
