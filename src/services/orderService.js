@@ -3,34 +3,36 @@ import Product from '../models/product.js';
 import { NotFoundError } from '../class/errorClass.js';
 
 const OrderService = {
-    // 주문 생성
-    createOrder: async (productId, buyerId) => {
-        const product = await Product.findById(productId).populate('sellerId');
-        if (!product) {
-            throw new NotFoundError('해당 상품이 존재하지 않습니다.');
-        }
+    // 결제 페이지
+    createOrder: async (order) => {
+        const { buyerId, buyerName, postalCode, basicAdd, detailAdd, phone, 
+                productId, productName, productImg, productPrice, request } = order;
 
-        const sellerId = product.sellerId; // 상품의 판매자 ID
-
+        // 결제 페이지
         const newOrder = new Order({
-            productId,
             buyerId,
-            sellerId: product.sellerId._id,
+            buyerName,
+            postalCode,
+            basicAdd,
+            detailAdd,
+            phone,
+            productId,
+            productName,
+            productImg,
+            productPrice,
+            request,
         });
 
         await newOrder.save();
-        const populatedOrder = await Order.findById(newOrder._id)
-            .populate('productId', 'name image price')
-            .populate('buyerId', 'name phone postalCode basicAdd detailAdd');
-        return populatedOrder;
+        return { message: '상품이 성공적으로 결제되었습니다.', order: newOrder };
+
     },
 
-    // 로그인된 사용자가 구매한 모든 주문 조회
+    // 구매내역 조회
     getOrdersByBuyerId: async (buyerId) => {
-        const orders = await Order.find({ buyerId })
-            .populate('productId', 'name image price') // 상품 정보
-            .populate('buyerId', 'name phone basicAdd detailAdd') // 구매자 정보
-            .populate('sellerId', 'name email'); // 판매자 정보
+        const orders = await Order.find({ 'buyer.userId': buyerId })
+            .populate('product.productId', 'name image price') // 상품 정보
+            .populate('seller.userId', 'nickname'); // 판매자 정보
 
         if (orders.length === 0) {
             throw new NotFoundError('구매한 주문이 없습니다.');
