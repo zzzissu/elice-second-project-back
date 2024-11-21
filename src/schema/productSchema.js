@@ -12,7 +12,7 @@ const productSchema = new mongoose.Schema({
     },
     categoryName: {
         type: String,
-        enum: ['audio devices', 'cameras', 'typewriters', 'mobile phones', 'display devices'],
+        enum: ['audio', 'camera', 'typewriter', 'phone', 'display'],
         required: true,
     },
     createdAt: { type: Date, default: Date.now },

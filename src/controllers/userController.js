@@ -5,8 +5,11 @@ import asyncHandler from '../utils/asyncHandler.js';
 const userController = {
     // 유저 목록 조회
     userList: asyncHandler(async (req, res, next) => {
-        const users = await userService.userList();
-        res.status(200).json(users);
+        const page = parseInt(req.query.page, 10) || 1; // 기본값 1
+        const limit = parseInt(req.query.limit, 10) || 10; // 기본값 10
+
+        const result = await userService.userList(page, limit);
+        res.status(200).json(result);
     }),
 
     // 이메일 중복 확인
