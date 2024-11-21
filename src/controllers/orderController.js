@@ -14,9 +14,12 @@ const OrderController = {
 
         const orders = await OrderService.getOrdersByBuyerId(buyerId);
 
+        // orders가 null 또는 undefined인 경우 빈 배열로 설정
+        const safeOrders = Array.isArray(orders) ? orders : [];
+
         res.status(200).json({
-            message: '구매한 주문 목록을 조회했습니다.',
-            orders: orders.map((order) => ({
+            message: safeOrders.length > 0 ? '구매한 주문 목록을 성공적으로 조회했습니다.' : '구매한 주문이 없습니다.',
+            orders: safeOrders.map((order) => ({
                 orderId: order._id,
                 productId: {
                     id: order.productId._id,
@@ -30,5 +33,4 @@ const OrderController = {
         });
     }),
 };
-
 export default OrderController;
