@@ -12,7 +12,7 @@ const productController = {
     },
     */
 
-    getProductList: asyncHandler(async(req, res, next) => {
+    getProductList: asyncHandler(async (req, res, next) => {
         const { currentPage = 1, limit = 12, sort = 'latest', categoryName } = req.query;
         // 상품 리스트 조회 서비스 호출
         const result = await productService.getProductList(Number(currentPage), Number(limit), sort, categoryName);
@@ -39,13 +39,19 @@ const productController = {
     */
 
     // 자신이 등록한 상품목록 조회
-    getMyProducts: asyncHandler(async(req, res, next) => {
+    getMyProducts: asyncHandler(async (req, res, next) => {
         const userId = req.user._id;
         const currentPage = parseInt(req.query.currentPage) || 1; // currentPage 파라미터 받기 (기본값: 1)
         const limit = parseInt(req.query.limit) || 6; // 페이지 크기 (기본값: 6)
         console.log('User ID from Controller:', userId); // userId 확인을 위한 로그
         const { myProducts, totalPages } = await productService.getMyProducts(userId, currentPage, limit);
-        res.status(200).json({ myProducts, currentPage, totalPages });
+        res.status(200).json({
+            message:
+                myProducts.length > 0 ? '판매중인 상품 목록을 성공적으로 조회했습니다.' : '등록된 상품이 없습니다.',
+            myProducts, // 상품 배열
+            currentPage, // 현재 페이지
+            totalPages, // 전체 페이지 수
+        });
     }),
 
     // 특정 상품 하나만 조회
@@ -57,14 +63,15 @@ const productController = {
 
     // 상품 수정
     updateProduct: asyncHandler(async (req, res, next) => {
-        const { productId, updateData } = req.body; // 요청 본문에서 상품 ID와 수정할 데이터 가져오기
+        const { productId } = req.params;
+        const { updateData } = req.body; // 요청 본문에서 상품 ID와 수정할 데이터 가져오기
         const result = await productService.updateProduct(productId, updateData);
         res.status(204).json(result); // 상품 수정 성공
     }),
 
     // 상품 삭제
     deleteProduct: asyncHandler(async (req, res, next) => {
-        const { productId } = req.body; // 요청 본문에서 상품 ID 가져오기
+        const { productId } = req.params; // 요청 본문에서 상품 ID 가져오기
         const result = await productService.deleteProduct(productId);
         res.status(204).json(result);
     }),

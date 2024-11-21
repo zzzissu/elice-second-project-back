@@ -17,9 +17,9 @@ router.get('/my', authenticate, productController.getMyProducts);
 router.get('/:productId', productController.getProduct);
 
 // 4. 상품 수정
-router.put('/:productId', productController.updateProduct);
+router.put('/:productId', authenticate, productController.updateProduct);
 
 // 5. 상품 삭제
-router.delete('/:productId', productController.deleteProduct);
+router.delete('/:productId', authenticate, productController.deleteProduct);
 
 export default router;
