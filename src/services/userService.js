@@ -7,13 +7,10 @@ const userService = {
     // 유저 목록 조회
     userList: async (page, limit) => {
         const skip = (page - 1) * limit; // 스킵할 데이터 수 계산
-        const users = await User.find({ deletedAt: null })
-            .sort({ createdAt: -1 })
-            .skip(skip)
-            .limit(limit);
+        const users = await User.find({ deletedAt: null }).sort({ createdAt: -1 }).skip(skip).limit(limit);
 
         if (!users) throw new NotFoundError('유저 목록을 찾을 수 없습니다.');
-        
+
         const totalUsers = await User.countDocuments({ deletedAt: null });
         const totalPages = Math.ceil(totalUsers / limit);
 
@@ -46,7 +43,7 @@ const userService = {
         if (!isMatch) {
             throw new UnauthorizedError('비밀번호가 일치하지 않습니다.');
         }
-        return { valid: true, message: '비밀번호가 일치합니다.' }
+        return { valid: true, message: '비밀번호가 일치합니다.' };
     },
 
     // 회원가입
@@ -85,9 +82,10 @@ const userService = {
 
     // 마이페이지 수정
     updateProfile: async (userId, updateData) => {
+        const { phone, image, postalCode, basicAdd, detailAdd } = updateData;
         const updatedUser = await User.findOneAndUpdate(
             { _id: userId, deletedAt: null },
-            { ...updateData, updatedAt: Date.now() },
+            { phone, image, postalCode, basicAdd, detailAdd, updatedAt: Date.now() },
             { new: true }
         ).select('-password -deletedAt');
         if (!updatedUser) throw new NotFoundError('사용자를 찾을 수 없습니다.');

@@ -57,7 +57,8 @@ const userController = {
     // 마이페이지 수정
     updateProfile: asyncHandler(async (req, res, next) => {
         const userId = req.user._id;
-        const updatedUser = await userService.updateProfile(userId, req.body);
+        const updateData = req.body;
+        const updatedUser = await userService.updateProfile(userId, updateData);
         res.status(200).json(updatedUser);
     }),
 

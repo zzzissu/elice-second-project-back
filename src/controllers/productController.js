@@ -12,7 +12,7 @@ const productController = {
     },
     */
 
-    getProductList: asyncHandler(async(req, res, next) => {
+    getProductList: asyncHandler(async (req, res, next) => {
         const { currentPage = 1, limit = 12, sort = 'latest', categoryName } = req.query;
         // 상품 리스트 조회 서비스 호출
         const result = await productService.getProductList(Number(currentPage), Number(limit), sort, categoryName);
@@ -39,7 +39,7 @@ const productController = {
     */
 
     // 자신이 등록한 상품목록 조회
-    getMyProducts: asyncHandler(async(req, res, next) => {
+    getMyProducts: asyncHandler(async (req, res, next) => {
         const userId = req.user._id;
         const currentPage = parseInt(req.query.currentPage) || 1; // currentPage 파라미터 받기 (기본값: 1)
         const limit = parseInt(req.query.limit) || 6; // 페이지 크기 (기본값: 6)
