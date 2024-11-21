@@ -45,7 +45,13 @@ const productController = {
         const limit = parseInt(req.query.limit) || 6; // 페이지 크기 (기본값: 6)
         console.log('User ID from Controller:', userId); // userId 확인을 위한 로그
         const { myProducts, totalPages } = await productService.getMyProducts(userId, currentPage, limit);
-        res.status(200).json({ myProducts, currentPage, totalPages });
+        res.status(200).json({
+            message:
+                myProducts.length > 0 ? '판매중인 상품 목록을 성공적으로 조회했습니다.' : '등록된 상품이 없습니다.',
+            myProducts, // 상품 배열
+            currentPage, // 현재 페이지
+            totalPages, // 전체 페이지 수
+        });
     }),
 
     // 특정 상품 하나만 조회

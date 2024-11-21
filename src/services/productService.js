@@ -12,7 +12,7 @@ const productService = {
         return products;
     }, 
     */
-    
+
     // 전체 상품 리스트 조회
     getProductList: async (currentPage, limit, sort, categoryName) => {
         // 기본 정렬 조건
@@ -20,7 +20,7 @@ const productService = {
         if (sort === 'oldest') {
             sortCondition = { createdAt: 1 }; // 오래된 순
         }
-    
+
         // 기본 필터 조건
         const filterCondition = { deletedAt: null, soldOut: false };
         if (categoryName) {
@@ -29,27 +29,24 @@ const productService = {
 
         // 로그 추가: filterCondition 확인
         console.log('Filter Condition:', filterCondition);
-    
+
         // currentPage와 limit을 기반으로 offset 계산
         const offset = (currentPage - 1) * limit;
-    
+
         // 데이터 조회
-        const products = await Product.find(filterCondition)
-            .sort(sortCondition)
-            .skip(offset)
-            .limit(limit);
-    
+        const products = await Product.find(filterCondition).sort(sortCondition).skip(offset).limit(limit);
+
         // 상품이 없으면 에러 던지기
         if (!products || products.length === 0) {
             throw new NotFoundError('상품 리스트 조회에 실패했습니다.');
         }
-    
+
         // 전체 개수
         const totalProducts = await Product.countDocuments(filterCondition);
-    
+
         // 총 페이지 수 계산
         const totalPages = Math.ceil(totalProducts / limit);
-    
+
         return {
             products,
             totalProducts,
@@ -64,7 +61,7 @@ const productService = {
         if (!name || !image || !price || !description || !categoryName) {
             throw new BadRequestError('상품 등록에 실패했습니다. 필수 정보가 누락되었습니다.');
         }
-        
+
         const newProduct = new Product({
             name,
             image,
@@ -115,15 +112,23 @@ const productService = {
             .populate('sellerId', 'nickname');
 
         if (myProducts.length === 0) {
-            throw new NotFoundError('등록된 상품이 없습니다.');
+            return {
+                myProducts: [],
+                currentPage,
+                totalPages,
+                message: '등록된 상품이 없습니다.',
+            };
         }
+
         return { myProducts, currentPage, totalPages }; //반환
     },
 
     // 특정 상품 하나만 조회
     getProduct: async (productId) => {
-        const product = await Product.findOne({ _id: productId, deletedAt: null, soldOut: false })
-            .populate('sellerId', 'nickname');  // sellerId로 유저의 nickname을 가져옵니다.
+        const product = await Product.findOne({ _id: productId, deletedAt: null, soldOut: false }).populate(
+            'sellerId',
+            'nickname'
+        ); // sellerId로 유저의 nickname을 가져옵니다.
 
         if (!product) {
             throw new NotFoundError('해당 상품을 찾을 수 없습니다.');
