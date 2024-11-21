@@ -82,8 +82,45 @@ const productService = {
         return { message: '상품이 성공적으로 등록되었습니다.', product: populatedProduct };
     },
 
+    /*
+    // 서비스: 내가 올린 상품 조회
+    getMyProducts: async (userId) => {
+        console.log('User ID:', userId); // userId 확인을 위한 로그
 
-    // 특정 상품 조회
+        // 이미 userId가 선언된 경우 재선언하지 않음
+        const myProducts = await Product.find({ sellerId: userId, deletedAt: null })
+            .populate('sellerId', 'nickname');
+
+        if (myProducts.length === 0) {
+            throw new NotFoundError('등록된 상품이 없습니다.'); // NotFoundError 대신 일반 Error 사용
+        }
+
+        return myProducts;
+    },
+    */
+
+    // 서비스: 내가 올린 상품 조회
+    getMyProducts: async (userId, currentPage = 1, limit = 6) => {
+        console.log('User ID:', userId); // userId 확인을 위한 로그
+        const skip = (currentPage - 1) * limit;
+
+        // 전체 상품 수 조회
+        const totalCount = await Product.countDocuments({ sellerId: userId, deletedAt: null });
+        const totalPages = Math.ceil(totalCount / limit); // 전체 페이지 수 계산
+
+        // 상품 조회
+        const myProducts = await Product.find({ sellerId: userId, deletedAt: null })
+            .skip(skip)
+            .limit(limit)
+            .populate('sellerId', 'nickname');
+
+        if (myProducts.length === 0) {
+            throw new NotFoundError('등록된 상품이 없습니다.');
+        }
+        return { myProducts, currentPage, totalPages }; //반환
+    },
+
+    // 특정 상품 하나만 조회
     getProduct: async (productId) => {
         const product = await Product.findOne({ _id: productId, deletedAt: null, soldOut: false })
             .populate('sellerId', 'nickname');  // sellerId로 유저의 nickname을 가져옵니다.

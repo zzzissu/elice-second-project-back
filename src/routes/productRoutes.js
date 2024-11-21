@@ -10,6 +10,9 @@ router.get('/', productController.getProductList);
 // 2. 상품 등록
 router.post('/', authenticate, productController.uploadProduct);
 
+// 3. 내가 올린 상품만 조회
+router.get('/my', authenticate, productController.getMyProducts);
+
 // 3. 특정 상품 조회
 router.get('/:productId', productController.getProduct);
 
