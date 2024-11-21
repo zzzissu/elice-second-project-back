@@ -88,8 +88,6 @@ const userService = {
             { phone, image, postalCode, basicAdd, detailAdd, updatedAt: Date.now() },
             { new: true }
         ).select('-password -deletedAt');
-        console.log(updateData);
-        console.log(updatedUser);
         if (!updatedUser) throw new NotFoundError('사용자를 찾을 수 없습니다.');
         return updatedUser;
     },

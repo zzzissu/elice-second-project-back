@@ -24,10 +24,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
-app.post('/data', (req, res) => {
-    console.log('Received data:', req.body); // 데이터 확인
-    res.status(200).send('Data received');
-});
 
 app.use(errorMiddleware);
 
@@ -36,7 +32,6 @@ connectDB();
 
 // 기본 라우트 설정
 app.get('/', (req, res) => {
-    console.log('Received data:', req.body);
     res.send('Hello, World!');
 });
 
