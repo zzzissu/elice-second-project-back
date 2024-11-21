@@ -1,45 +1,45 @@
 import Order from '../models/order.js';
-import Product from '../models/product.js';
-import { NotFoundError } from '../class/errorClass.js';
 
-const OrderService = {
-    // 결제 페이지
-    createOrder: async (order) => {
-        const { buyerId, buyerName, postalCode, basicAdd, detailAdd, phone, 
-                productId, productName, productImg, productPrice, request } = order;
+const orderService = {
 
-        // 결제 페이지
+    // 결제 생성
+    createOrder: async (orderData) => {
+        const {
+            receiverName,         // 수령인 이름
+            receiverPhone,        // 수령인 전화번호
+            postalCode,           // 우편번호
+            basicAdd,             // 기본 주소
+            detailAdd,            // 상세 주소
+            request,              // 요청사항
+            items,                // 상품 목록 배열
+            paymentMethod,        // 결제 방법
+            totalPrice,           // 총 가격
+        } = orderData;
+    
+        // items 배열을 처리
+        const processedItems = items.map(item => ({
+            productId: item.productId,
+            productName: item.productName,
+            productImage: item.productImage,
+            productPrice: item.productPrice,
+        }));
+    
+        // 주문 생성 로직 예시
         const newOrder = new Order({
-            buyerId,
-            buyerName,
+            receiverName,
+            receiverPhone,
             postalCode,
             basicAdd,
             detailAdd,
-            phone,
-            productId,
-            productName,
-            productImg,
-            productPrice,
             request,
+            items: processedItems,
+            paymentMethod,
+            totalPrice,
         });
-
-        await newOrder.save();
-        return { message: '상품이 성공적으로 결제되었습니다.', order: newOrder };
-
+    
+        return await newOrder.save();
     },
-
-    // 구매내역 조회
-    getOrdersByBuyerId: async (buyerId) => {
-        const orders = await Order.find({ 'buyer.userId': buyerId })
-            .populate('product.productId', 'name image price') // 상품 정보
-            .populate('seller.userId', 'nickname'); // 판매자 정보
-
-        if (orders.length === 0) {
-            throw new NotFoundError('구매한 주문이 없습니다.');
-        }
-
-        return orders; // 주문 목록 반환
-    },
+    
 };
 
-export default OrderService;
+export default orderService;
