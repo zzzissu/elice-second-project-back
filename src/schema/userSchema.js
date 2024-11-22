@@ -12,9 +12,9 @@ const userSchema = new mongoose.Schema({
     basicAdd: { type: String, required: true },
     detailAdd: { type: String, required: false },
 
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now },
     deletedAt: { type: Date, default: null },
+}, {
+    timestamps: true
 });
 
 export default userSchema;
