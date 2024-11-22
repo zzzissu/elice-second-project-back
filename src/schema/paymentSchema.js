@@ -2,18 +2,13 @@ import mongoose from "mongoose";
 
 const paymentSchema = new mongoose.Schema(
   {
-    paymentKey: { type: String, required: true, unique: true },
-    orderId: { type: String, required: true },
-    amount: { type: Number, required: true },
-    status: { type: String, enum: ["pending", "confirmed", "failed"], default: "pending" },
-    paymentMethod: { type: String },
-    transactionId: { type: String },
-    approvedAt: {type: Date },
-    failedReason: { type: String },
+    paymentKey: { type: String, required: true }, // 결제 키
+    orderId: { type: String, required: true },   // 주문 ID
+    amount: { type: Number, required: true },    // 결제 금액
+    status: { type: String, required: true },    // 결제 상태 (e.g., 'SUCCESS', 'FAILED')
+    createdAt: { type: Date, default: Date.now }, // 생성일
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 export default paymentSchema;
