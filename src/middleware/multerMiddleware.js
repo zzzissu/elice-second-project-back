@@ -1,8 +1,9 @@
 import multer from "multer";
+import path from "path";
 
 const storage = multer.diskStorage({
   destination: (req, file, done) => {
-    done(null, "uploads/");
+    done(null, "uploadImgs/");
   },
 
   filename: (req, file, done) => {
@@ -14,6 +15,6 @@ const storage = multer.diskStorage({
   limits: { fileSize: 10 * 1024 * 1024 },
 });
 
-const upload = multer({ storage: storage });
+const uploadImg = multer({ storage: storage });
 
-module.exports = upload;
+module.exports = uploadImg;

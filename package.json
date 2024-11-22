@@ -1,5 +1,6 @@
 {
     "dependencies": {
+        "aws-sdk": "^2.1692.0",
         "bcrypt": "^5.1.1",
         "cookie-parser": "^1.4.7",
         "cors": "^2.8.5",
@@ -10,6 +11,8 @@
         "multer": "^1.4.5-lts.1"
     },
     "devDependencies": {
+        "@types/express": "^5.0.0",
+        "@types/multer": "^1.4.12",
         "nodemon": "^3.1.7"
     },
     "scripts": {
