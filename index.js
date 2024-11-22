@@ -6,6 +6,7 @@ import authRoutes from './src/routes/authRoutes.js';
 import productRoutes from './src/routes/productRoutes.js';
 import orderRoutes from './src/routes/orderRoutes.js';
 import paymentRoutes from './src/routes/paymentRoutes.js';
+import fileUploadRoutes from './src/routes/fileUploadRoutes.js';
 import connectDB from './src/db/db.js'; // DB 연결 함수 임포트
 import errorMiddleware from './src/middleware/errorMiddleware.js';
 import cors from 'cors';
@@ -26,6 +27,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use('/api/upload', fileUploadRoutes);
 
 app.use(errorMiddleware);
 
