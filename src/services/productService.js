@@ -28,7 +28,7 @@ const productService = {
 
         // 상품이 없으면 에러 던지기
         if (!products || products.length === 0) {
-            throw new NotFoundError('상품 리스트 조회에 실패했습니다.');
+            throw new BadRequestError('상품 리스트 조회에 실패했습니다.');
         }
 
         // 전체 개수
