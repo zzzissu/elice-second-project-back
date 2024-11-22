@@ -85,7 +85,7 @@ const userService = {
         const { phone, image, postalCode, basicAdd, detailAdd } = updateData;
         const updatedUser = await User.findOneAndUpdate(
             { _id: userId, deletedAt: null },
-            { phone, image, postalCode, basicAdd, detailAdd, updatedAt: Date.now() },
+            { phone, image, postalCode, basicAdd, detailAdd },
             { new: true }
         ).select('-password -deletedAt');
         if (!updatedUser) throw new NotFoundError('사용자를 찾을 수 없습니다.');

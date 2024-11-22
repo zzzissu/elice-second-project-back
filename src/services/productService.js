@@ -1,17 +1,7 @@
 import Product from '../models/product.js';
-import { NotFoundError, BadRequestError } from '../class/errorClass.js';
+import { NotFoundError, BadRequestError, UnauthorizedError } from '../class/errorClass.js';
 
 const productService = {
-    /*
-    // 상품 리스트 조회
-    getProductList: async () => {
-        const products = await Product.find({ deletedAt: null, soldOut: false }).sort({ createdAt: -1 });
-        if (!products) {
-            throw new NotFoundError('상품 리스트 조회에 실패했습니다.');
-        }
-        return products;
-    }, 
-    */
 
     // 전체 상품 리스트 조회
     getProductList: async (currentPage, limit, sort, categoryName) => {
@@ -79,24 +69,7 @@ const productService = {
         return { message: '상품이 성공적으로 등록되었습니다.', product: populatedProduct };
     },
 
-    /*
-    // 서비스: 내가 올린 상품 조회
-    getMyProducts: async (userId) => {
-        console.log('User ID:', userId); // userId 확인을 위한 로그
-
-        // 이미 userId가 선언된 경우 재선언하지 않음
-        const myProducts = await Product.find({ sellerId: userId, deletedAt: null })
-            .populate('sellerId', 'nickname');
-
-        if (myProducts.length === 0) {
-            throw new NotFoundError('등록된 상품이 없습니다.'); // NotFoundError 대신 일반 Error 사용
-        }
-
-        return myProducts;
-    },
-    */
-
-    // 서비스: 내가 올린 상품 조회
+    // 서비스: 내가 올린 상품 조회(판매중인 상품)
     getMyProducts: async (userId, currentPage = 1, limit = 6) => {
         console.log('User ID:', userId); // userId 확인을 위한 로그
         const skip = (currentPage - 1) * limit;
@@ -123,7 +96,7 @@ const productService = {
         return { myProducts, currentPage, totalPages }; //반환
     },
 
-    // 특정 상품 하나만 조회
+    // 특정 상품 상세 조회
     getProduct: async (productId) => {
         const product = await Product.findOne({ _id: productId, deletedAt: null, soldOut: false }).populate(
             'sellerId',
@@ -137,30 +110,60 @@ const productService = {
     },
 
     // 상품 수정
-    updateProduct: async (productId, updateData) => {
+// 상품 수정
+    updateProduct: async (productId, updateData, userId) => {
         const { name, image, price, description, categoryName } = updateData;
-        const updatedProduct = await Product.findOneAndUpdate(
-            { _id: productId, deletedAt: null, soldOut: false },
-            { name, image, price, description, categoryName, updatedAt: Date.now() },
-            { new: true } // 수정된 데이터를 반환
-        );
-        if (!updatedProduct) {
+
+        // 수정하려는 상품 조회
+        const product = await Product.findOne({
+            _id: productId,
+            deletedAt: null,
+            soldOut: false,
+        });
+
+        // 상품 존재 여부 확인
+        if (!product) {
             throw new NotFoundError('상품을 찾을 수 없습니다.');
         }
-        return { message: '상품이 성공적으로 수정되었습니다.', product: updatedProduct };
+
+        // 상품의 sellerId와 요청한 사용자의 userId 비교
+        if (product.sellerId.toString() !== userId) {
+            throw new UnauthorizedError('해당 상품을 수정할 권한이 없습니다.');
+        }
+
+        // 상품 업데이트
+        const updatedProduct = await Product.findOneAndUpdate(
+            { _id: productId },
+            {name, image, price, description, categoryName },
+            { new: true } // 수정된 데이터를 반환
+        );
+
+        return { message: '상품이 성공적으로 수정되었습니다.' };
     },
 
     // 상품 삭제
-    deleteProduct: async (productId) => {
+    deleteProduct: async (productId, userId) => {
+
+        // 삭제하려는 상품 조회
+        const product = await Product.findOne({
+            _id: productId,
+            soldOut: false,
+        });
+
+        if (!product) {
+            throw new NotFoundError('상품을 찾을 수 없습니다.');
+        }
+        // 상품의 sellerId와 요청한 사용자의 userId 비교
+        if (product.sellerId.toString() !== userId) {
+            throw new UnauthorizedError('해당 상품을 삭제할 권한이 없습니다.');
+        }
+
         const deletedProduct = await Product.findOneAndUpdate(
             { _id: productId, deletedAt: null },
             { deletedAt: Date.now() },
             { new: true } // 삭제된 데이터를 반환
         );
-        if (!deletedProduct) {
-            throw new NotFoundError('상품을 찾을 수 없습니다.');
-        }
-        return { message: '상품이 성공적으로 삭제되었습니다.', product: deletedProduct };
+        return { message: '상품이 성공적으로 삭제되었습니다.' };
     },
 };
 
