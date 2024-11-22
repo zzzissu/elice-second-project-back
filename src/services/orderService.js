@@ -5,36 +5,37 @@ const orderService = {
     // 결제 생성
     createOrder: async (orderData) => {
         const {
-            receiverName,         // 수령인 이름
-            receiverPhone,        // 수령인 전화번호
-            postalCode,           // 우편번호
-            basicAdd,             // 기본 주소
-            detailAdd,            // 상세 주소
-            request,              // 요청사항
-            items,                // 상품 목록 배열
-            paymentMethod,        // 결제 방법
-            totalPrice,           // 총 가격
-        } = orderData;
-    
+            name,
+            phone,
+            postalCode,
+            address,
+            detailAddress,
+            requestMessage,
+            items,
+            totalAmount,
+          } = orderData;
+        
         // items 배열을 처리
-        const processedItems = items.map(item => ({
-            productId: item.productId,
-            productName: item.productName,
-            productImage: item.productImage,
-            productPrice: item.productPrice,
+        const processedItems =items.map((item) => ({
+            categoryName: item.categoryName,
+            description: item.description || "", // 선택적으로 존재하지 않을 수 있음
+            image: item.image,
+            name: item.name,
+            price: item.price,
+            sellerId: item.sellerId,
         }));
-    
+        
+        
         // 주문 생성 로직 예시
         const newOrder = new Order({
-            receiverName,
-            receiverPhone,
+            name,
+            phone,
             postalCode,
-            basicAdd,
-            detailAdd,
-            request,
+            address,
+            detailAddress,
+            requestMessage,
             items: processedItems,
-            paymentMethod,
-            totalPrice,
+            totalAmount,
         });
     
         return await newOrder.save();
