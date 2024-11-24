@@ -1,71 +1,56 @@
-import { Upload } from '@aws-sdk/lib-storage'; // Upload 임포트
-import s3 from '../config/aws.js'; // S3 클라이언트 임포트
-import stream from 'stream'; // Node.js stream 모듈 임포트
+import s3 from '../config/aws.js'; // S3 클라이언트
+import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 const fileController = {
-    profileFile: async (req, res) => {
-        if (!req.file) {
-            return res.status(400).send('파일이 없습니다.');
+    // 프로필 이미지 프리사인드 URL 생성
+    generateProfilePresignedUrl: async (req, res) => {
+        const { fileName, fileType } = req.body; // 클라이언트에서 파일 이름과 타입을 전달받음
+        if (!fileName || !fileType) {
+            return res.status(400).send('파일 이름과 타입이 필요합니다.');
         }
 
         try {
-            // 스트림을 만들어서 버퍼를 스트림으로 변환
-            const bufferStream = new stream.PassThrough();
-            bufferStream.end(req.file.buffer); // 버퍼를 스트림에 전달
-
-            const uploadParams = {
-                Bucket: 'elice-project-oreore', // S3 버킷 이름
-                Key: `profile/${Date.now()}_${req.file.originalname}`, // S3에 저장될 파일 이름
-                Body: bufferStream, // 스트림을 Body로 전달
+            const params = {
+                Bucket: 'elice-project-oreore',
+                Key: `profile/${Date.now()}_${fileName}`, // 저장 경로 설정
+                ContentType: fileType, // 파일 타입 설정
             };
 
-            // Upload 클래스를 사용하여 멀티파트 업로드
-            const upload = new Upload({
-                client: s3,
-                params: uploadParams,
+            // 프리사인드 URL 생성
+            const presignedUrl = await getSignedUrl(s3, new PutObjectCommand(params), {
+                expiresIn: 3600, // URL 유효기간 (초 단위, 예: 1시간)
             });
 
-            await upload.done(); // 업로드 완료
-            res.status(200).json({
-                message: '파일 업로드 성공',
-                file: req.file, // 업로드된 파일 정보
-            });
+            res.status(200).json({ presignedUrl });
         } catch (error) {
-            res.status(500).send('파일 업로드 실패');
-            console.error(error);
+            console.error('프리사인드 URL 생성 실패:', error);
+            res.status(500).send('프리사인드 URL 생성 실패');
         }
     },
 
-    productFile: async (req, res) => {
-        if (!req.file) {
-            return res.status(400).send('파일이 없습니다.');
+    // 상품 이미지 프리사인드 URL 생성
+    generateProductPresignedUrl: async (req, res) => {
+        const { fileName, fileType } = req.body;
+        if (!fileName || !fileType) {
+            return res.status(400).send('파일 이름과 타입이 필요합니다.');
         }
 
         try {
-            // 스트림을 만들어서 버퍼를 스트림으로 변환
-            const bufferStream = new stream.PassThrough();
-            bufferStream.end(req.file.buffer); // 버퍼를 스트림에 전달
-
-            const uploadParams = {
-                Bucket: 'elice-project-oreore', // S3 버킷 이름
-                Key: `product/${Date.now()}_${req.file.originalname}`, // S3에 저장될 파일 이름
-                Body: bufferStream, // 스트림을 Body로 전달
+            const params = {
+                Bucket: 'elice-project-oreore',
+                Key: `product/${Date.now()}_${fileName}`,
+                ContentType: fileType,
             };
 
-            // Upload 클래스를 사용하여 멀티파트 업로드
-            const upload = new Upload({
-                client: s3,
-                params: uploadParams,
+            const presignedUrl = await getSignedUrl(s3, new PutObjectCommand(params), {
+                expiresIn: 3600,
             });
 
-            await upload.done(); // 업로드 완료
-            res.status(200).json({
-                message: '파일 업로드 성공',
-                file: req.file, // 업로드된 파일 정보
-            });
+            res.status(200).json({ presignedUrl });
         } catch (error) {
-            res.status(500).send('파일 업로드 실패');
-            console.error(error);
+            console.error('프리사인드 URL 생성 실패:', error);
+            res.status(500).send('프리사인드 URL 생성 실패');
         }
     },
 };
