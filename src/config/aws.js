@@ -1,8 +1,7 @@
-import { S3Client } from '@aws-sdk/client-s3'; // AWS SDK v3에서 가져올 S3Client
 import dotenv from 'dotenv';
-
 // 환경변수로 AWS 키 설정
 dotenv.config();
+import { S3Client } from '@aws-sdk/client-s3'; // AWS SDK v3에서 가져올 S3Client
 
 // AWS S3 클라이언트 생성 (AWS SDK v3 사용)
 const s3 = new S3Client({
