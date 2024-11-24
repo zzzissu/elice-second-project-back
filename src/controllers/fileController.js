@@ -15,6 +15,7 @@ const fileController = {
                 Bucket: 'elice-project-oreore',
                 Key: `profile/${Date.now()}_${fileName}`, // 저장 경로 설정
                 ContentType: fileType, // 파일 타입 설정
+                ACL: 'public-read', // 퍼블릭 읽기 권한 설정
             };
 
             // 프리사인드 URL 생성
@@ -41,6 +42,7 @@ const fileController = {
                 Bucket: 'elice-project-oreore',
                 Key: `product/${Date.now()}_${fileName}`,
                 ContentType: fileType,
+                ACL: 'public-read', // 퍼블릭 읽기 권한 설정
             };
 
             const presignedUrl = await getSignedUrl(s3, new PutObjectCommand(params), {
