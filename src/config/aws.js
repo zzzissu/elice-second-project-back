@@ -6,12 +6,12 @@ dotenv.config();
 
 // AWS S3 클라이언트 생성 (AWS SDK v3 사용)
 const s3 = new S3Client({
-    region: process.env.AWS_REGION, // AWS region 설정, 여기서는 ap-northeast-2
+    region: process.env.AWS_REGION || 'ap-northeast-2', // 환경 변수가 없으면 기본값으로 설정
     credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID, // AWS Access Key ID
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY, // AWS Secret Access Key
     },
-    endpoint: `https://s3.${process.env.AWS_REGION}.amazonaws.com`, // 리전별 엔드포인트 설정
+    endpoint: `https://s3.${process.env.AWS_REGION || 'ap-northeast-2'}.amazonaws.com`, // 리전별 엔드포인트 설정
 });
 
 export default s3;
