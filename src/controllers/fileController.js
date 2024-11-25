@@ -11,18 +11,23 @@ const fileController = {
         }
 
         try {
+            const uniqueFileName = `profile/${Date.now()}_${fileName}`; // 고유 파일 이름
             const params = {
                 Bucket: 'elice-project-oreore',
-                Key: `profile/${Date.now()}_${fileName}`, // 저장 경로 설정
-                ContentType: fileType, // 파일 타입 설정
+                Key: uniqueFileName,
+                ContentType: fileType,
+                ACL: 'public-read', // 퍼블릭 읽기 권한 설정
             };
 
             // 프리사인드 URL 생성
             const presignedUrl = await getSignedUrl(s3, new PutObjectCommand(params), {
-                expiresIn: 3600, // URL 유효기간 (초 단위, 예: 1시간)
+                expiresIn: 3600, // URL 유효기간 (1시간)
             });
 
-            res.status(200).json({ presignedUrl });
+            // S3 객체 URL 생성
+            const s3ObjectUrl = `https://${params.Bucket}.s3.ap-northeast-2.amazonaws.com/${uniqueFileName}`;
+
+            res.status(200).json({ presignedUrl, s3ObjectUrl });
         } catch (error) {
             console.error('프리사인드 URL 생성 실패:', error);
             res.status(500).send('프리사인드 URL 생성 실패');
@@ -37,18 +42,23 @@ const fileController = {
         }
 
         try {
+            const uniqueFileName = `product/${Date.now()}_${fileName}`; // 고유 파일 이름
             const params = {
                 Bucket: 'elice-project-oreore',
-                Key: `product/${Date.now()}_${fileName}`,
+                Key: uniqueFileName,
                 ContentType: fileType,
-                ACL: 'public-read',
+                ACL: 'public-read', // 퍼블릭 읽기 권한 설정
             };
 
+            // 프리사인드 URL 생성
             const presignedUrl = await getSignedUrl(s3, new PutObjectCommand(params), {
-                expiresIn: 3600,
+                expiresIn: 3600, // URL 유효기간 (1시간)
             });
 
-            res.status(200).json({ presignedUrl });
+            // S3 객체 URL 생성
+            const s3ObjectUrl = `https://${params.Bucket}.s3.ap-northeast-2.amazonaws.com/${uniqueFileName}`;
+
+            res.status(200).json({ presignedUrl, s3ObjectUrl });
         } catch (error) {
             console.error('프리사인드 URL 생성 실패:', error);
             res.status(500).send('프리사인드 URL 생성 실패');
