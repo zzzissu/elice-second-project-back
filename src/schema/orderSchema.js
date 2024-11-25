@@ -8,8 +8,11 @@ const orderSchema = new mongoose.Schema({
     address: { type: String, required: true },             // 기본 주소
     detailAddress: { type: String, required: false },           // 상세 주소
     requestMessage: {type: String, required: true },
+    buyerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     items: [
         {
+            _id: { type: Boolean, default: false }, // 자동 생성되는 _id를 방지
+            productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
             categoryName: {type: String, required: true },
             description: {type: String, required: false },
             image: {type: String, required: true },

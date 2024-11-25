@@ -5,9 +5,9 @@ import orderController from '../controllers/orderController.js';
 const router = express.Router();
 
 // 결제 생성
-router.post('/', orderController.createOrder);
+router.post('/',authenticate, orderController.createOrder);
 
-// 승인 요청
+// 구매 내역 조회(마이페이지)
 // router.get('/', authenticate, orderController.getAllOrdersByBuyer);
 
 
