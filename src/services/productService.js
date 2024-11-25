@@ -2,7 +2,6 @@ import Product from '../models/product.js';
 import { NotFoundError, BadRequestError, UnauthorizedError } from '../class/errorClass.js';
 
 const productService = {
-
     // 전체 상품 리스트 조회
     getProductList: async (currentPage, limit, sort, categoryName) => {
         // 기본 정렬 조건
@@ -26,10 +25,10 @@ const productService = {
         // 데이터 조회
         const products = await Product.find(filterCondition).sort(sortCondition).skip(offset).limit(limit);
 
-        // 상품이 없으면 에러 던지기
-        if (!products || products.length === 0) {
-            throw new BadRequestError('상품 리스트 조회에 실패했습니다.');
-        }
+        // // 상품이 없으면 에러 던지기
+        // if (!products || products.length === 0) {
+        //     throw new BadRequestError('상품 리스트 조회에 실패했습니다.');
+        // }
 
         // 전체 개수
         const totalProducts = await Product.countDocuments(filterCondition);
@@ -110,7 +109,7 @@ const productService = {
     },
 
     // 상품 수정
-// 상품 수정
+    // 상품 수정
     updateProduct: async (productId, updateData, userId) => {
         const { name, image, price, description, categoryName } = updateData;
 
@@ -134,7 +133,7 @@ const productService = {
         // 상품 업데이트
         const updatedProduct = await Product.findOneAndUpdate(
             { _id: productId },
-            {name, image, price, description, categoryName },
+            { name, image, price, description, categoryName },
             { new: true } // 수정된 데이터를 반환
         );
 
@@ -143,7 +142,6 @@ const productService = {
 
     // 상품 삭제
     deleteProduct: async (productId, userId) => {
-
         // 삭제하려는 상품 조회
         const product = await Product.findOne({
             _id: productId,
