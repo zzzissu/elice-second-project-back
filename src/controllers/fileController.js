@@ -41,6 +41,7 @@ const fileController = {
                 Bucket: 'elice-project-oreore',
                 Key: `product/${Date.now()}_${fileName}`,
                 ContentType: fileType,
+                ACL: 'public-read',
             };
 
             const presignedUrl = await getSignedUrl(s3, new PutObjectCommand(params), {
