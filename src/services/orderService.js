@@ -3,7 +3,7 @@ import Order from '../models/order.js';
 const orderService = {
 
     // 결제 생성
-    createOrder: async (orderData) => {
+    createOrder: async (req, orderData) => {
         const {
             name,
             phone,
@@ -17,6 +17,8 @@ const orderService = {
         
         // items 배열을 처리
         const processedItems =items.map((item) => ({
+            // productId: mongoose.Types.ObjectId(item.productId),
+            productId: item.productId,
             categoryName: item.categoryName,
             description: item.description || "", // 선택적으로 존재하지 않을 수 있음
             image: item.image,
@@ -34,6 +36,7 @@ const orderService = {
             address,
             detailAddress,
             requestMessage,
+            buyerId: req.user._id,
             items: processedItems,
             totalAmount,
         });
